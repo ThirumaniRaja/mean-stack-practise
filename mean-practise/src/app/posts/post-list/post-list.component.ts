@@ -1,4 +1,5 @@
-import { Component, OnInit,Input} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
+import { Post } from 'src/app/models/post.model';
 import { PostService } from 'src/app/services/post.service';
 
 @Component({
@@ -14,12 +15,15 @@ export class PostListComponent implements OnInit {
   //   {id:4, title:"JavaScript", content: "Programming language"}
   // ]
 
-  @Input() postList:any = [];
+  postList:any = [];
 
   constructor(public postService:PostService) { }
 
   ngOnInit(): void {
-
+    // this.postList = this.postService.getPosts();
+    this.postService.getPostsListener().subscribe((postData:Post[])=>{
+      this.postList = postData
+    })
   }
 
 }

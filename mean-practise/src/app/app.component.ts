@@ -8,7 +8,7 @@ import { Post } from './models/post.model';
 })
 export class AppComponent {
 addedPostList:any = [];
-  onPostAdded(post: Post){
-    this.addedPostList.push(post);
-  }
+  // onPostAdded(post: Post){
+  //   this.addedPostList.push(post);
+  // }
 }
