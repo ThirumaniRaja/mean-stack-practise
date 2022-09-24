@@ -1,6 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Post } from '../models/post.model';
+import { Post, PostResponse } from '../models/post.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,10 +9,17 @@ import { Post } from '../models/post.model';
 export class PostService {
 private post: Post[] = [];
 private addPostSubject = new Subject<Post[]>();
-  constructor() { }
+private URL = "http://localhost:3000/api";
+  constructor(private Http:HttpClient) {
+
+  }
 
   getPosts(){
-    return [...this.post];
+    this.Http.get<PostResponse>(this.URL+'/post').subscribe((postData)=>{
+      console.log("postData",postData)
+      this.post = postData.post;
+      this.addPostSubject.next([...this.post])
+    })
   }
 
   getPostsListener(){
@@ -23,8 +31,12 @@ private addPostSubject = new Subject<Post[]>();
       title:title,
       content:content
     }
-    this.post.push(createPost);
-    this.addPostSubject.next([...this.post])
+    this.Http.post<any>(this.URL+'/posts',createPost).subscribe(data=>{
+      console.log("post-create",data);
+      this.post.push(createPost);
+      this.addPostSubject.next([...this.post])
+    });
+
   }
 
 
