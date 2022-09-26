@@ -9,13 +9,13 @@ import { Post, PostResponse } from '../models/post.model';
 export class PostService {
 private post: Post[] = [];
 private addPostSubject = new Subject<Post[]>();
-private URL = "http://localhost:3000/api";
+private URL = "http://localhost:3000/api/posts";
   constructor(private Http:HttpClient) {
 
   }
 
   getPosts(){
-    this.Http.get<PostResponse>(this.URL+'/post').subscribe((postData)=>{
+    this.Http.get<PostResponse>(this.URL).subscribe((postData)=>{
       console.log("postData",postData)
       this.post = postData.post;
       this.addPostSubject.next([...this.post])
@@ -31,7 +31,7 @@ private URL = "http://localhost:3000/api";
       title:title,
       content:content
     }
-    this.Http.post<any>(this.URL+'/posts',createPost).subscribe(data=>{
+    this.Http.post<any>(this.URL,createPost).subscribe(data=>{
       console.log("post-create",data);
       this.post.push(createPost);
       this.addPostSubject.next([...this.post])
