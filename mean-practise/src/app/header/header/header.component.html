@@ -1,1 +1,14 @@
-<mat-toolbar color="primary">MyMessages</mat-toolbar>
+<mat-toolbar color="primary">
+  <span class="header-text">
+    App
+</span>
+<span class="spacer"></span>
+<span>
+  <a class="header-text" mat-button routerLink="/" routerLinkActive="mat-accent" [routerLinkActiveOptions]="{exact: true}" >post list</a>
+</span>
+<ul>
+<li>
+<a class="header-text" mat-button routerLink="/create" routerLinkActive="mat-accent" [routerLinkActiveOptions]="{exact: true}" >create post</a>
+</li>
+</ul>
+</mat-toolbar>

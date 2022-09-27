@@ -1,10 +1,15 @@
-<mat-accordion>
-  <mat-expansion-panel>
+<mat-accordion multi="true" *ngIf="postList.length > 0">
+  <mat-expansion-panel *ngFor="let post of postList">
     <mat-expansion-panel-header>
-      panel - header
+      {{post.title}}
     </mat-expansion-panel-header>
     <p>
-      i am in expansion panel
+      {{post.content}}
     </p>
+    <mat-action-row>
+      <a mat-button color="primary" [routerLink]="['/edit',post.id]">Edit</a>
+      <button mat-button color="warn" (click)="onDeletePost(post.id)">Delete</button>
+    </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
+<p *ngIf="postList.length < 1">no post added.!</p>
