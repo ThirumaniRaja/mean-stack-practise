@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { map, sample, Subject } from 'rxjs';
 import { Post, PostResponse } from '../models/post.model';
 
 @Injectable({
@@ -15,9 +15,18 @@ private URL = "http://localhost:3000/api/posts";
   }
 
   getPosts(){
-    this.Http.get<PostResponse>(this.URL).subscribe((postData)=>{
+    this.Http.get<any>(this.URL).pipe(map((postResponse)=>{
+      return postResponse.post.map(((post:any)=>{
+        return {
+          id: post._id,
+          title: post.title,
+          content: post.content
+        };
+      }))
+    }))
+    .subscribe((postData)=>{
       console.log("postData",postData)
-      this.post = postData.post;
+      this.post = postData;
       this.addPostSubject.next([...this.post])
     })
   }
@@ -36,6 +45,26 @@ private URL = "http://localhost:3000/api/posts";
       this.post.push(createPost);
       this.addPostSubject.next([...this.post])
     });
+
+  }
+
+  deletePost(id:string){
+    // console.log(`${this.URL}/${id}`,id)
+    this.Http.delete(`${this.URL}/${id}`).subscribe(()=>{
+      //my usually method
+      // if(status === 'post deleted'){
+      //   this.getPosts()
+      // }
+
+      //course method
+      const updatedPost = this.post.filter(post=> post.id !== id)
+      this.post = updatedPost;
+      this.addPostSubject.next([...this.post])
+      console.log("post-Deleted");
+    })
+  }
+
+  editPost(post:Post){
 
   }
 
