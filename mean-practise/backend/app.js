@@ -5,7 +5,7 @@ const app = express();
 
 // mongoose.connect("mongodb://localhost:27017").then(()=>{
 mongoose.connect("mongodb+srv://Thiruzz:zOKs8lIx8518CEy4@cluster0.rff0uf8.mongodb.net/?retryWrites=true&w=majority").then(()=>{
-console.log("connected");
+console.log("Mongo-Connected");
 }).catch((error)=>{
   console.log("error in connection",error);
 
@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({extended:false}))
 app.use((req,res,next)=>{
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST,DELETE,UPDATE,PATCH,OPTIONS")
+  res.setHeader("Access-Control-Allow-Methods", "GET,PUT, POST,DELETE,UPDATE,PATCH,OPTIONS")
   next();
 })
 
@@ -36,12 +36,13 @@ app.post("/api/posts",(req,res,next)=>{
     title: req.body.title,
     content: req.body.content
   })
-  newPost.save();
-  console.log("Post",newPost);
-  res.status(201).json({
-    message:'success'
-    // post:newPost
+  newPost.save().then(createPost=>{
+    res.status(201).json({
+      message:'success',
+      postId:createPost._id
+    });
   });
+
 })
 
 
@@ -53,6 +54,19 @@ app.get('/api/posts',(req,res,next)=>{
       message:"success",
       post:data});
     })
+})
+
+app.put('/api/posts/:id',(req,res,next)=>{
+  const uPost = new Post({
+    _id:req.body.id,
+    title: req.body.title,
+    content: req.body.content
+  })
+  Post.updateOne({_id: req.params.id},uPost).then(result=>{
+    res.status(200).json({
+      message:"post updated.!"
+    })
+  })
 })
 
 app.delete('/api/posts/:id',(req,res,next)=>{

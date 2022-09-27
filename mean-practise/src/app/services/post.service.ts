@@ -35,13 +35,33 @@ private URL = "http://localhost:3000/api/posts";
     return this.addPostSubject.asObservable();
   }
 
+  //edit post
+  getPostList(id:string){
+    return {...this.post.find(post=> post.id === id)} as Post;
+  }
+
+  //update post
+  updatePost(id:string,title:string,content:string){
+    const updatePostList: Post = {id: id, title: title, content: content };
+    this.Http.put(`${this.URL}/${id}`,updatePostList).subscribe((result) => {
+      // const updatedPost = this.post.filter(post=> post.id !== id)
+      // this.post = updatedPost;
+      // this.addPostSubject.next([...this.post])
+      console.log("post-updated",result);
+    })
+  }
+
+
+
   addPost(title:string,content:string){
     const createPost:Post = {
+      id:null,
       title:title,
       content:content
     }
     this.Http.post<any>(this.URL,createPost).subscribe(data=>{
       console.log("post-create",data);
+      createPost.id = data.postId;
       this.post.push(createPost);
       this.addPostSubject.next([...this.post])
     });
