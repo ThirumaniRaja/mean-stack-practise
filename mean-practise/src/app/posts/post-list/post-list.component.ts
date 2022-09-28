@@ -10,6 +10,7 @@ import { PostService } from 'src/app/services/post.service';
 })
 export class PostListComponent implements OnInit , OnDestroy {
  private postSub$:Subscription | undefined ;
+ public isLoading = false;
   // postList = [
   //   {id:1, title:"Java", content: "Programming language"},
   //   {id:2, title:"HTML", content: "interpreted language"},
@@ -23,9 +24,11 @@ export class PostListComponent implements OnInit , OnDestroy {
 
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.postService.getPosts();
     this.postSub$ = this.postService.getPostsListener().subscribe((postData:Post[])=>{
-      this.postList = postData
+      this.isLoading = false;
+      this.postList = postData;
     })
   }
 

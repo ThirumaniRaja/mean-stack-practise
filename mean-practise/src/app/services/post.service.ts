@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { map, sample, Subject } from 'rxjs';
 import { Post, PostResponse } from '../models/post.model';
 
@@ -10,7 +11,7 @@ export class PostService {
 private post: Post[] = [];
 private addPostSubject = new Subject<Post[]>();
 private URL = "http://localhost:3000/api/posts";
-  constructor(private Http:HttpClient) {
+  constructor(private Http:HttpClient, private router:Router) {
 
   }
 
@@ -28,6 +29,7 @@ private URL = "http://localhost:3000/api/posts";
       console.log("postData",postData)
       this.post = postData;
       this.addPostSubject.next([...this.post])
+      this.router.navigate(["/"]);
     })
   }
 
@@ -37,16 +39,21 @@ private URL = "http://localhost:3000/api/posts";
 
   //edit post
   getPostList(id:string){
-    return {...this.post.find(post=> post.id === id)} as Post;
+    // return {...this.post.find(post=> post.id === id)} as Post;
+    return this.Http.get<any>(`${this.URL}/${id}`);
   }
 
   //update post
   updatePost(id:string,title:string,content:string){
     const updatePostList: Post = {id: id, title: title, content: content };
     this.Http.put(`${this.URL}/${id}`,updatePostList).subscribe((result) => {
-      // const updatedPost = this.post.filter(post=> post.id !== id)
-      // this.post = updatedPost;
-      // this.addPostSubject.next([...this.post])
+      const upDatedPost = [...this.post];
+      const oldPostIndex = upDatedPost.findIndex(p=> p.id === updatePostList.id);
+      upDatedPost[oldPostIndex] = updatePostList;
+      this.post = upDatedPost;
+      this.addPostSubject.next([...this.post])
+      this.router.navigate(["/"]);
+
       console.log("post-updated",result);
     })
   }
@@ -64,6 +71,8 @@ private URL = "http://localhost:3000/api/posts";
       createPost.id = data.postId;
       this.post.push(createPost);
       this.addPostSubject.next([...this.post])
+      this.router.navigate(["/"]);
+
     });
 
   }
